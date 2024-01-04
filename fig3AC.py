@@ -49,11 +49,6 @@ taus = file['taus']
 
 plt.figure(figsize=(3,2))
 
-delete_indices = [38,39,40,55,56]
-fs = np.delete(fs,delete_indices)
-taus = np.delete(taus,delete_indices)
-
-
 plt.plot(fs_data,taus_data,'D',color='k',markersize=5)
 plt.plot(fs_data,SDs,'^',color='#d90429',markersize=4)
 plt.plot(fs_data,invSlopes,'s',color='#118ab2',markersize=3)
