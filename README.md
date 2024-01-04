@@ -11,4 +11,5 @@ fig2BDF.py (panels B, D, and F)
 fig3AC.py (panels A and C)  
 fig3B.py  
 fig3D.py  
-
+  
+The direction "Bond_lifetime_calculations" contains code for our Fokker-Planck solver to compute mean bond lifetimes.
