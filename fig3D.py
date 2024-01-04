@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-file = np.load('E_sLex_tuned.npz')
+file = np.load('E_sLex_adj.npz')
 fs = file['fs']
 taus = file['taus']
 
@@ -12,11 +12,11 @@ file = np.load('two-state_lifetime_distribution_E-sel.npz')
 ts_2state = file['ts']
 P_taus_2state = file['P_taus']
 
-point_index = 40
+point_index = 54
 print('f = ',fs[point_index])
 ts = np.linspace(0,2)
 p_L_model = 1/taus[point_index] * np.exp(-ts/taus[point_index] )
-#quit()
+
 
 #These are lifetimes for E-selectin at 48pN
 lifetimes = [0.021015761821366025,	0.07705779334500876,	0.1330998248686515,	0.2031523642732049,	0.24518388791593695,	0.30122591943957966,	0.350262697022767,	0.4203152364273205,	0.51138353765324,	0.5884413309982486,	0.6514886164623468,	0.6514886164623468,	0.8056042031523643,	0.861646234676007,	0.9316987740805605,	1.0017513134851137,	1.0577933450087567,	1.106830122591944,	1.1698774080560421,	1.2609457092819616,	1.3099824868651486,	1.295971978984238,	1.436077057793345,	1.4851138353765325,	1.597197898423818,	1.6042031523642732,	1.8003502626970227,	1.8563922942206652]
@@ -35,14 +35,12 @@ plt.figure(figsize=(2.8,2))
 plt.plot(lifetimes,np.log10(p_L_data),'D',color='#2a9d8f',markersize=6)
 plt.plot(ts,np.log10(p_L_model),'k',linewidth=3)
 plt.plot(ts_2state,np.log10(P_taus_2state),color='#e07a5f',linewidth=2)
-#plt.yscale('log')
 plt.xlim(0,2.)
 plt.gca().set_xticks([0,.5,1,1.5,2])
 plt.gca().set_xticklabels([0,'','','',2])
 plt.gca().set_yticks([-2,-1,0,1,2])
 plt.gca().set_yticklabels([-2,'','','',2])
 
-plt.savefig('E_survival_plot.eps',transparent=True)
 
 plt.show()
 

@@ -2,84 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import types
 
-class Cubic_bond_1D:
-	def __init__(self,a,b,c,ell=0,f=0):
-		self.a = a
-		self.b = b
-		self.c = c
-		self.d = d
-		self.ell = ell
-		self.f = f
-
-	def V(self,x):
-		return self.a*x +self.b*x**2 + self.c*x**3 - self.f*self.ell*x
-
-class Simple_cubic_2D:
-	def __init__(self,a,b,c,d,ell=0,f=0,T=4.28):
-		self.a = a
-		self.b = b
-		self.c = c
-		self.d = d
-		self.ell = ell
-		self.f = f
-		self.T = T
-		self.xm = None #x_minimum
-		self.ym = None #y_minimum
-		self.xs = None #x_saddle
-		self.ys = None #y_saddle
-
-	def V(self,x,y):
-		return self.a*x + self.b*x**2 + self.c*x**3 + self.d*y**2 - self.f*self.ell*x
-
-	def find_critical_points(self):
-		self.ym = 0
-		self.ys = 0
-
-		if self.c>0:
-			self.xm = (-2*self.b + np.sqrt(4*self.b**2 - 12*(self.a-self.f*self.ell)*self.c))/(6*self.c)
-			self.xs = (-2*self.b - np.sqrt(4*self.b**2 - 12*(self.a-self.f*self.ell)*self.c))/(6*self.c)
-		else:
-			self.xm = (-2*self.b - np.sqrt(4*self.b**2 - 12*(self.a-self.f*self.ell)*self.c))/(6*self.c)
-			self.xs = (-2*self.b + np.sqrt(4*self.b**2 - 12*(self.a-self.f*self.ell)*self.c))/(6*self.c)			
-
-	def find_minimum(self):
-		self.find_critical_points()
-
-	def force(self,x,y):
-		#Computing force at point x,y (due to bond and extenral applied force)
-		h = 0.00001
-		V0 = self.V(x,y)
-		V_x = (self.V(x+h,y) - V0)/h
-		V_y = (self.V(x,y+h) - V0)/h
-		return -1*V_x,-1*V_y
-
-	def hessian(self,x, y):
-		h = 0.00001
-		V0 = self.V(x, y)
-		V_xx = (self.V(x + h, y) + self.V(x - h, y) - 2 * V0) / h**2
-		V_yy = (self.V(x, y + h) + self.V(x, y - h) - 2 * V0) / h**2
-		V_xy = (self.V(x + h, y + h) + V0 - self.V(x + h, y) - self.V(x, y + h)) / h**2
-		return np.array([[V_xx, V_xy], [V_xy, V_yy]])
-
-	def detH(self,x, y):
-		h = 0.00001
-		V0 = self.V(x, y)
-		V_xx = (self.V(x + h, y) + self.V(x - h, y) - 2 * V0) / h**2
-		V_yy = (self.V(x, y + h) + self.V(x, y - h) - 2 * V0) / h**2
-		V_xy = (self.V(x + h, y + h) + V0 - self.V(x + h, y) - self.V(x, y + h)) / h**2
-		return V_xx*V_yy-V_xy*V_xy
-
-	def langers_rate(self):
-		if self.xm==None or self.xs==None or self.ym==None or self.ys==None:
-			self.find_critical_points()
-
-		Eb = self.V(self.xs,self.ys) - self.V(self.xm,self.ym)
-		H_saddle = self.hessian(self.xs,self.ys)
-		H_evals = np.linalg.eigvalsh(H_saddle)
-		omega_saddle_sqr = -1*min(H_evals)
-		return np.exp(-Eb/self.T) * omega_saddle_sqr/(2*np.pi) * np.sqrt(-self.detH(self.xm,self.ym)/self.detH(self.xs,self.ys))
-
-
 
 class Selectin:
 	def __init__(self,W,theta0,sigma,D0,k_theta,a,theta1,gamma,f=0,T=4.28):
@@ -251,32 +173,6 @@ class Selectin:
 		#print('prefactor = ',sqrt(detA)*omega_S_unstable/(2*pi*omega_S_stable),Eb)
 		#print('Leaving langers_tau')
 		return 1/(np.sqrt(detA)*omega_S_unstable/(2*np.pi*self.gamma*omega_S_stable) * np.exp(-Eb/self.T)) , Eb
-
-
-class Tuned_Selectin(Selectin):
-	def __init__(self,W,theta0,sigma,D0,k_theta,a,theta1,gamma,f=0,T=4.28,a1=0,mu1=0,s1=0,a2=0,mu2=0,s2=0,const=0):
-		
-		self.a1 = a1
-		self.mu1 = mu1
-		self.s1 = s1
-		self.a2 = a2
-		self.mu2 = mu2
-		self.s2 = s2
-		self.const = const
-		super().__init__(W,theta0,sigma,D0,k_theta,a,theta1,gamma,f,T)
-
-	def V(self,x,y):
-		#x: Extension E (E=2Wsin(theta/2))
-		#y: Bond distance d
-		
-		theta = 2*np.arcsin(x/(2*self.W))
-		#weird = np.maximum(theta,self.theta0)
-		V_theta = 0.5*self.k_theta*(theta-self.theta0)**2 #/ (1+0.01*theta)
-		Ds = self.D0*np.exp(-0.5*(theta-self.theta1)**2/self.sigma**2) + self.const + self.a1*np.exp(-0.5*(x-self.mu1)**2/self.s1**2) + self.a2*np.exp(-0.5*(x-self.mu2)**2/self.s2**2)
-		M = (1-np.exp(-self.a*y))**2 - 1 
-		return V_theta + Ds*M - self.f*(x+y) #+ .1/(y+1)**12
-
-
 
 
 
