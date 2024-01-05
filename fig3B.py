@@ -95,20 +95,20 @@ SL_width = 2
 
 
 W = 2.8
-a = 1/.26 # 3.9 #1/nm
-sigma = 0.59 # radians
-D0 = 205 # pNnm
+a = 3.9 #1/nm
+sigma = 0.57 # radians
+D0 = 206.9 # pNnm
 k_theta = 273 # pNnm
 gamma = 0.000033 # pN s / nm
 theta0 = 0.58*pi
-theta1 = 1.0*pi
+theta1 = 0.995*pi
 
 xmin,xmax=3.7,2*W*0.99999
 ymin,ymax = -.4,1.1
 
 Eselectin = Selectin(W=W,a=a,sigma=sigma,D0=D0,k_theta=k_theta,theta0=theta0,theta1=theta1,gamma=gamma)
 def D_adjustment(self,theta):
-	return 10.0
+	return 9.5
 Eselectin.modify_D_adjustment(D_adjustment)
 
 # Plots detH0 curve
