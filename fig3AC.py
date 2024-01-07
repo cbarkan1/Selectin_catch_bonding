@@ -43,7 +43,7 @@ taus_data = np.array([0.46367713,0.443497758,0.423318386,0.401793722,0.404484305
 SDs = np.array([0.49478673,	0.411374408,	0.4	,0.35450237	,0.381042654,	0.407582938	,0.636966825,	0.472037915,	0.411374408	,0.301421801,	0.263507109	,0.225592417,	0.193364929	,0.172511848,	0.106161137])
 invSlopes = np.array([0.508056872	,0.437914692,	0.426540284,	0.436018957,	0.420853081	,0.447393365,	0.678672986,	0.51563981,	0.447393365	,0.312796209	,0.276777251	,0.244549763	,0.206635071	,0.172511848	,0.111848341])
 
-file = np.load('E_sLex_adj.npz')
+file = np.load('E_sLex_aug.npz')
 fs = file['fs']
 taus = file['taus']
 
@@ -64,7 +64,7 @@ plt.gca().set_yticklabels([0,'','',.6])
 
 
 #Inset
-tuned_D_file = np.load('D_adj.npz')
+tuned_D_file = np.load('D_aug.npz')
 Es = tuned_D_file['Es']
 Ds = tuned_D_file['Ds']
 D_adjustments = tuned_D_file['D_adjustments']

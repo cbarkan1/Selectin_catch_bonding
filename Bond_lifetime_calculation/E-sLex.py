@@ -38,7 +38,7 @@ if 0: # Gaussian D(theta)
 		return 9.5 + 0*theta
 	Eselectin.modify_D_adjustment(D_adjustment)
 
-else: # Adjusted D(theta)
+else: # Augmented D(theta)
 	W = 2.8
 	a = 3.9 #1/nm
 	sigma = 0.57 # radians

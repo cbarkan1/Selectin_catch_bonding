@@ -346,56 +346,49 @@ if 1: # Plot switch line
 ## Panel F
 ##
 W = 2.8
-a = 1.6 #1/nm
-sigma = 0.34 # radians
-D0 = 192 # pNnm
-k_theta = 250 # pNnm
+a = 1.7 #1/nm
+sigma = 0.31 # radians
+D0 = 155 # pNnm
+k_theta = 210 # pNnm
 gamma = 0.000033 # pN s / nm
 theta0 = 0.58*pi
-theta1 = 0.94*pi
+theta1 = 0.9*pi
 
-xmin,xmax=4,2*W*0.99999
+xmin,xmax=4.3,2*W*0.99999
 ymin,ymax = -.3,1.3
 Pselectin = Selectin(W=W,a=a,sigma=sigma,D0=D0,k_theta=k_theta,theta0=theta0,theta1=theta1,gamma=gamma)
-
-def D_adjustment2(self,theta): # Adds the constant c
-	return 8.1 + 0*theta
-Pselectin.modify_D_adjustment(D_adjustment2)
 
 
 plt.figure(figsize=(3,2))
 ax = plt.gca()
-plt.xlim(4.6,xmax)
-plt.ylim(-.25,1)
-ax.set_xticks([4.75,5,5.25,5.5])
-ax.set_xticklabels([4.75,'','',5.5])
+plt.xlim(4.45,xmax)
+plt.ylim(-.25,1.06)
+ax.set_xticks([4.5,5,5.5])
+ax.set_xticklabels([4.5,'',5.5])
 ax.set_yticks([0,0.5,1])
 ax.set_yticklabels([0,'',1])
 
 
-switch_points = plot_detH0_curve(Pselectin,4.4,xmax,ymin,ymax)
+switch_points = plot_detH0_curve(Pselectin,4.3,xmax,ymin,ymax)
 
 
 # Plot separatrix
 E0,d0 = switch_points[0][:]
-us = np.linspace(0,0.08,10000)
-Xs = regularized_trajectory(Pselectin,E0,d0,us)
+us = np.linspace(0,0.09,10000)
+Xs = regularized_trajectory(Pselectin,E0,d0-.05,us)
 plt.plot(Xs[:,0],Xs[:,1],color='#5c5c5c',linestyle=Sepx_linestyle)
 Xs = regularized_trajectory(Pselectin,E0-.01,d0-.01,-us[0:6000])
 plt.plot(Xs[:,0],Xs[:,1],color='#5c5c5c',linestyle=Sepx_linestyle)
-#Xs = regularized_trajectory(Pselectin,E0-.01,d0+.01,us)
-#plt.plot(Xs[:,0],Xs[:,1],'--',color='#5c5c5c')
-
 
 # Plot switch points:
 for point in switch_points:
 	plt.plot([point[0]],[point[1]],'o',color='#ff7700',markersize=14)
 
-
-fs = np.linspace(1,90,200)
+fs = np.linspace(0,90,300)
 num_fs = len(fs)
 Ebs = np.zeros(num_fs)
 saddles,minimums = np.zeros((num_fs,2)),np.zeros((num_fs,2))
+saddle2s,minimum2s = np.zeros((num_fs,2)),np.zeros((num_fs,2))
 for i in range(num_fs):
 	Pselectin.f = fs[i]
 	Pselectin.find_saddle(4.7,xmax,ymin,ymax)
@@ -403,17 +396,15 @@ for i in range(num_fs):
 	saddles[i,0],saddles[i,1] = Pselectin.xs,Pselectin.ys
 	minimums[i,0],minimums[i,1] = Pselectin.xm,Pselectin.ym
 	Ebs[i] = Pselectin.V(Pselectin.xs,Pselectin.ys) - Pselectin.V(Pselectin.xm,Pselectin.ym)
-plt.plot([minimums[0,0]],[minimums[0,1]],'ko',markersize=9)
-plt.plot([saddles[2,0]],[saddles[2,1]],'kX',markersize=10)
-plot_curve_with_arrow(ax,minimums[:,0],minimums[:,1],length_scale=110,linewidth=1.7,angle=0.45)
-plot_curve_with_arrow(ax,saddles[:,0],saddles[:,1],length_scale=45,linewidth=1.7,angle=0.45)
 
+plt.plot([minimums[0,0]],[minimums[0,1]],'ko',markersize=9)
+plt.plot([saddles[0,0]],[saddles[0,1]],'kX',markersize=10)
+plot_curve_with_arrow(ax,minimums[:,0],minimums[:,1],length_scale=120,linewidth=1.7,angle=0.45)
+plot_curve_with_arrow(ax,saddles[:,0],saddles[:,1],length_scale=52,linewidth=1.7,angle=0.45)
 
 
 
 if 1: # Plot switch line
-
-
 	def find_switch(bond,h_force,fs,switch_type):
 		bond.h_force = h_force
 		num_fs = len(fs)
@@ -434,6 +425,9 @@ if 1: # Plot switch line
 			switch_index = np.argmin(Ebs)
 
 		x_switch,y_switch = xss[switch_index],yss[switch_index]
+		#plt.plot(xss,yss,'--',color='green')
+		#plt.plot(xss[0],yss[0],'o',color='green')
+		#plt.plot(x_switch,y_switch,'o',color='orange')
 		bond.h_force = [0,0]
 		return x_switch,y_switch
 
@@ -444,15 +438,15 @@ if 1: # Plot switch line
 	y1 = saddles[Eb_switch_index,1]
 
 	Pselectin.f = 0
-	h = Pselectin.grad_V(4.75,0.8)
-	x2,y2 = find_switch(Pselectin,h,np.linspace(0,10,50),'catch_to_slip')
+	h = Pselectin.grad_V(4.5,1.2)
+	x2,y2 = find_switch(Pselectin,h,np.linspace(0,10,50),'slip_to_catch')
 
-	Pselectin.f = 0
-	h = Pselectin.grad_V(4.64,1)
-	x3,y3 = find_switch(Pselectin,h,np.linspace(0,10,50),'slip_to_catch')
+	#Pselectin.f = 0
+	#h = Pselectin.grad_V(4.64,1)
+	#x3,y3 = find_switch(Pselectin,h,np.linspace(0,10,50),'slip_to_catch')
 
-	x_switches = np.array([x1,x2,x3])
-	y_switches = np.array([y1,y2,y3])
+	x_switches = np.array([x1,x2])
+	y_switches = np.array([y1,y2])
 
 	H = Pselectin.hessian(switch_points[1][0],switch_points[1][1])
 	lambdas,vs = np.linalg.eigh(H)
@@ -469,12 +463,10 @@ if 1: # Plot switch line
 
 
 	from scipy.interpolate import CubicSpline
-	switchline_xs = np.linspace(4.4,switch_points[1][0],100)
+	switchline_xs = np.linspace(4.,switch_points[1][0],100)
 	switchline_func = CubicSpline(x_switches,y_switches)
 	plt.plot(switchline_xs,switchline_func(switchline_xs),color='#ff7700',linewidth=SL_width)
-
-
-
+	#plt.plot(x_switches,y_switches,'.')
 
 
 plt.show()

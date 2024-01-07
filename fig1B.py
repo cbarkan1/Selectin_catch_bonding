@@ -9,7 +9,7 @@ pi = np.pi
 
 
 def V(x,y,f,params):
-	#x: Extension E (E=2Wsin(theta/2))
+	#x: Extension L (L=2Wsin(theta/2))
 	#y: Bond distance d
 	W,theta0,sigma,D0,k_theta,a,theta1 = params[:]
 	theta = 2*arcsin(x/(2*W))
@@ -149,7 +149,7 @@ plt.colorbar(im, cax=cax, orientation='horizontal', ticks=[-8, 0, 8,16])
 
 
 print(minimum_points)
-ax.plot(minimum_points[0][0]-.01,minimum_points[0][1],'o',color='black',markersize=10)
+ax.plot(minimum_points[0][0],minimum_points[0][1],'o',color='black',markersize=10)
 ax.plot(saddle_points[0][0],saddle_points[0][1],'X',color='black',markersize=10)
 
 ax.set_xticks([1.7*W,1.8*W,1.9*W,2*W])

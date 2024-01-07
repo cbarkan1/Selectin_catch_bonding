@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import types
 
-
 class Selectin:
 	def __init__(self,W,theta0,sigma,D0,k_theta,a,theta1,gamma,f=0,T=4.28):
 		self.W = W
@@ -115,6 +114,29 @@ class Selectin:
 			min_vect = [min_x,min_y]
 		self.xm , self.ym = np.min([min_vect[0],Emax]) , min_vect[1]
 
+	def find_minimum_in_region(self,xmin,xmax,ymin,ymax):
+		xs = np.linspace(xmin,xmax,100)
+		ys = np.linspace(ymin,ymax,100)
+		x_mesh,y_mesh = np.meshgrid(xs,ys)
+		Vs = self.V(x_mesh,y_mesh)
+
+		detHs = self.detH(x_mesh,y_mesh)
+		Vs[detHs<=0] = np.inf
+		min_y_index,min_x_index = np.unravel_index(Vs.argmin(), Vs.shape)
+		min_x,min_y = xs[min_x_index],ys[min_y_index]
+		if 1: #Adjust
+			H = self.hessian(min_x,min_y)
+			vect = np.array([min_x,min_y])
+			min_vect = np.linalg.solve(H,H@vect - self.grad_V(min_x,min_y))
+		else:
+			min_vect = [min_x,min_y]
+		
+		if min_vect[0]<xmin or min_vect[0]>xmax or min_vect[1]<ymin or min_vect[1]>ymax:
+			return np.nan,np.nan
+		else:
+			return min_vect[0], min_vect[1]
+
+
 
 	def find_saddle(self,xmin,xmax,ymin,ymax):
 		xs = np.linspace(xmin,xmax,100)
@@ -137,6 +159,7 @@ class Selectin:
 		else:
 			saddle_vect = [saddle_x,saddle_y]
 		self.xs , self.ys = saddle_vect[0] , saddle_vect[1]
+		return saddle_vect[0] , saddle_vect[1]
 
 	def find_saddle_precision(self,xmin,xmax,ymin,ymax,n_iter=3):
 		xs = np.linspace(xmin,xmax,100)
@@ -156,6 +179,33 @@ class Selectin:
 		self.xs , self.ys = saddle_vect[0] , saddle_vect[1]
 
 
+	def find_saddle_in_region(self,xmin,xmax,ymin,ymax):
+		xs = np.linspace(xmin,xmax,100)
+		ys = np.linspace(ymin,ymax,100)
+		x_mesh,y_mesh = np.meshgrid(xs,ys)
+		detHs = self.detH(x_mesh,y_mesh)
+		grad_V_magnitudes = self.grad_V_magnitude(x_mesh,y_mesh)
+		grad_V_magnitudes[detHs>=0] = np.inf
+
+		#plt.figure()
+		#plt.imshow(grad_V_magnitudes)
+		#plt.show()
+
+		saddle_y_index,saddle_x_index = np.unravel_index(grad_V_magnitudes.argmin(), grad_V_magnitudes.shape)
+		saddle_x,saddle_y = xs[saddle_x_index],ys[saddle_y_index]
+		if 1: #Adjust
+			H = self.hessian(saddle_x,saddle_y)
+			vect = np.array([saddle_x,saddle_y])
+			saddle_vect = np.linalg.solve(H,H@vect - self.grad_V(saddle_x,saddle_y))
+		else:
+			saddle_vect = [saddle_x,saddle_y]
+
+		if saddle_vect[0]<xmin or saddle_vect[0]>xmax or saddle_vect[1]<ymin or saddle_vect[1]>ymax:
+			return np.nan,np.nan
+		else:
+			return saddle_vect[0], saddle_vect[1]
+
+
 	def langers_tau(self,xmin,xmax,ymin,ymax):
 		#print('Inside langers_tau')
 		self.find_minimum()
@@ -173,10 +223,4 @@ class Selectin:
 		#print('prefactor = ',sqrt(detA)*omega_S_unstable/(2*pi*omega_S_stable),Eb)
 		#print('Leaving langers_tau')
 		return 1/(np.sqrt(detA)*omega_S_unstable/(2*np.pi*self.gamma*omega_S_stable) * np.exp(-Eb/self.T)) , Eb
-
-
-
-
-
-
 

@@ -7,7 +7,7 @@ from numerical_bond_lifetime_funcs import *
 from bonds import *
 pi = np.pi
 
-
+# Experimental data:
 fs_sP = np.array([4.75297619047619,	6.74867724867725,	8.73875661375661,	10.92691798941799,	14.070767195767196,	17.611441798941797,	26.80820105820106,	36.088955026455025])
 taus_sP = np.array([0.106666667,	0.265,	0.395,	0.623333333,	0.268333333,	0.113333333,	0.115,	0.09])
 SDs_sP = np.array([0.103892613,	0.335503363,	0.405707018	,0.649527099,	0.44570724,	0.299775074,	0.233476805	,0.112356505])
@@ -16,16 +16,16 @@ invSlopes = np.array([0.125363825,	0.391060291	,0.454677755,	0.703534304	,0.3611
 
 
 W = 2.8
-a = 1.6 #1.7 #1/nm
-sigma = 0.34 # radians
-D0 = 192 # pNnm
-k_theta = 250 # 250 # pNnm
+a = 1.7 #1/nm
+sigma = 0.31 # radians
+D0 = 155 # pNnm
+k_theta = 210 # 250 # pNnm
 gamma = 0.000033 # pN s / nm
 theta0 = 0.58*pi
-theta1 = 0.94*pi
+theta1 = 0.9*pi
 
-xmin,xmax=4.,2*W*0.99999
-ymin,ymax = -.2, 1.3
+xmin,xmax=4.3,2*W*0.99999
+ymin,ymax = -.2, 2.1
 
 left_transmissive = True
 top_transmissive = True
@@ -33,11 +33,6 @@ right_transmissive = False
 bottom_transmissive = False
 
 Pselectin = Selectin(W=W,a=a,sigma=sigma,D0=D0,k_theta=k_theta,theta0=theta0,theta1=theta1,gamma=gamma)
-
-def D_adjustment2(self,theta): # Adds the constant c
-	return 8.1 + 0*theta
-Pselectin.modify_D_adjustment(D_adjustment2)
-
 
 
 fs = np.linspace(0,50,100)
