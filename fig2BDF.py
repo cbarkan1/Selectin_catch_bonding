@@ -348,8 +348,8 @@ if 1: # Plot switch line
 W = 2.8
 a = 1.7 #1/nm
 sigma = 0.31 # radians
-D0 = 155 # pNnm
-k_theta = 210 # pNnm
+D0 = 166.7 # pNnm
+k_theta = 240 # pNnm
 gamma = 0.000033 # pN s / nm
 theta0 = 0.58*pi
 theta1 = 0.9*pi

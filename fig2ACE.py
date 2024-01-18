@@ -92,9 +92,14 @@ file = np.load('P-sPSGL1.npz')
 fs = file['fs']
 taus = file['taus']
 
+file2 = np.load('P-sPSGL1_Weff.npz')
+fs2 = file2['fs']
+taus2 = file2['taus']
+
 plt.figure(figsize=(3,2))
 
 plt.plot(fs,taus,color='k')
+plt.plot(fs2,taus2,'--',color='#5e5e5e')
 plt.plot(fs_data,taus_data,'D',color='k',markersize=5)
 plt.plot(fs_data,SDs,'^',color='#d90429',markersize=4)
 plt.plot(fs_data,invSlopes,'s',color='#118ab2',markersize=3)
